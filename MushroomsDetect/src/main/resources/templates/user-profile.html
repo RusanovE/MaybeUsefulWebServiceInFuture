@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        h2, h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #userFormContainer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<form>
+    <img th:if="${user.userPhoto != null}" th:src="'data:image/png;base64,' + ${userPhotoBase64}" alt="User Photo"/>
+    <h2>Личный кабинет</h2>
+    <label for="userLogin">Логин:</label>
+    <input type="text" id="userLogin" name="login" th:value="${user.login}" readonly>
+
+    <h3>Меню:</h3>
+    <button type="button">Сменить данные</button>
+    <button type="button" th:onclick="'window.location.href = \'/welcome\''">На главную</button>
+
+    <!-- Кнопка для открытия pop-up формы -->
+    <button id="openFormButton">Change User Data</button>
+
+    <!-- Контейнер для pop-up формы -->
+    <div id="userFormContainer">
+        <!-- Форма ввода данных пользователя -->
+        <form id="userForm" th:action="@{/userProfile/changeUserDetails}" method="post" enctype="application/json">
+            <label for="login">Login:</label>
+            <input type="text" id="login" name="login" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <select id="role" name="role">
+                <option value="ROLE_USER">Пользователь</option>
+                <option value="ROLE_ADMIN">Администратор</option>
+                <option value="ROLE_GUEST">Гость</option>
+            </select>
+
+            <button type="submit" id="submitUserData">Change User Data</button>
+        </form>
+    </div>
+</form>
+
+<!-- Ваш jQuery скрипт (если есть) -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#openFormButton").click(function () {
+            $("#userFormContainer").show();
+        });
+    });
+</script>
+</body>
+</html>
