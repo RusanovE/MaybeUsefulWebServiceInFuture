@@ -12,6 +12,10 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         form {
@@ -67,52 +71,87 @@
 
         #userFormContainer {
             display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .closeButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            background: none;
+            border: none;
+            width: auto;
+            height: auto;
+            padding: 0;
         }
     </style>
 </head>
 <body>
-<form>
+<div id="overlay"></div>
+
+<div id="userFormContainer">
+    <h2>Изминение данных</h2>
+    <button id="closeButton" class="closeButton">X</button>
+
+    <!-- Форма ввода данных пользователя -->
+    <form id="userForm" th:action="@{/userProfile/changeUserDetails}" method="post" enctype="multipart/form-data">
+        <label for="login">Логин:</label>
+        <input type="text" id="login" name="login" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button id="changeData" type="submit">Изменить</button>
+    </form>
+</div>
+
+<div style="width: 80%; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 5px;">
     <img th:if="${user.userPhoto != null}" th:src="'data:image/png;base64,' + ${userPhotoBase64}" alt="User Photo"/>
     <h2>Личный кабинет</h2>
     <label for="userLogin">Логин:</label>
-    <input type="text" id="userLogin" name="login" th:value="${user.login}" readonly>
+    <input type="text" id="userLogin" name="current login" th:value="${user.login}" readonly>
 
     <h3>Меню:</h3>
-    <button type="button">Сменить данные</button>
-    <button type="button" th:onclick="'window.location.href = \'/welcome\''">На главную</button>
+    <button type="button" id="openFormButton">Сменить данные</button>
+    <button type="button" onclick="window.location.href = '/welcome'">На главную</button>
+</div>
 
-    <!-- Кнопка для открытия pop-up формы -->
-    <button id="openFormButton">Change User Data</button>
-
-    <!-- Контейнер для pop-up формы -->
-    <div id="userFormContainer">
-        <!-- Форма ввода данных пользователя -->
-        <form id="userForm" th:action="@{/userProfile/changeUserDetails}" method="post" enctype="application/json">
-            <label for="login">Login:</label>
-            <input type="text" id="login" name="login" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <select id="role" name="role">
-                <option value="ROLE_USER">Пользователь</option>
-                <option value="ROLE_ADMIN">Администратор</option>
-                <option value="ROLE_GUEST">Гость</option>
-            </select>
-
-            <button type="submit" id="submitUserData">Change User Data</button>
-        </form>
-    </div>
-</form>
-
-<!-- Ваш jQuery скрипт (если есть) -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $("#openFormButton").click(function () {
-            $("#userFormContainer").show();
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('openFormButton').addEventListener('click', function () {
+            document.getElementById('userFormContainer').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        document.getElementById('closeButton').addEventListener('click', function () {
+            document.getElementById('userFormContainer').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
         });
     });
 </script>
+
 </body>
 </html>
