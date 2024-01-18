@@ -5,7 +5,11 @@ import com.example.mushroomsdetect.entitys.UserOfApp;
 import com.example.mushroomsdetect.repos.UserRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,11 +17,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
@@ -60,10 +66,11 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
     }
 
-    public void updateUserDetails(String login, String newLogin) {
+    public void updateUserDetails(String login, String newLogin, String newPassword) {
         UserOfApp user = userRepo.findByLogin(login);
 
         user.setLogin(newLogin);
+        user.setPassword(newPassword);
 
         userRepo.save(user);
     }
@@ -81,5 +88,18 @@ public class UserService implements UserDetailsService {
         return new User(user.getLogin(),
                 user.getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())));
+    }
+
+    public void reloadUserByUsername(String login, Principal principal) throws UsernameNotFoundException {
+        UserDetails userDetailsService = loadUserByUsername(login);
+        try {
+            ((Authentication) principal).setAuthenticated(false);
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(userDetailsService, null, userDetailsService.getAuthorities()));
+
+        } catch (IllegalArgumentException e) {
+            log.error("Error changing user data: "+ e.getMessage());
+            throw  e;
+        }
     }
 }
