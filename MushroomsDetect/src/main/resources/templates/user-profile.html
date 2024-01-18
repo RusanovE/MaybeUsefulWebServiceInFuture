@@ -107,6 +107,18 @@
             height: auto;
             padding: 0;
         }
+
+        .info-wrapper {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 400px;
+            max-width: 500px;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -128,9 +140,12 @@
     </form>
 </div>
 
-<div style="width: 80%; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 5px;">
-    <img th:if="${user.userPhoto != null}" th:src="'data:image/png;base64,' + ${userPhotoBase64}" alt="User Photo"/>
+<div class="info-wrapper">
     <h2>Личный кабинет</h2>
+
+    <img th:if="${user.userPhoto != null}" th:src="'data:image/png;base64,' + ${userPhotoBase64}" alt="User Photo"/>
+    <img th:if="${userPhotoBase64 == null}" th:src="@{/img/default-photo.png}" alt="Default User Photo"/>
+
     <label for="userLogin">Логин:</label>
     <input type="text" id="userLogin" name="current login" th:value="${user.login}" readonly>
 

@@ -1,25 +1,20 @@
 package com.example.mushroomsdetect.controllers;
 
-import com.example.mushroomsdetect.DTO.UserDTO;
-import com.example.mushroomsdetect.entitys.Role;
 import com.example.mushroomsdetect.entitys.UserOfApp;
 import com.example.mushroomsdetect.services.UserService;
+import com.example.mushroomsdetect.services.impl.CustomUserDetailServiceImpl;
 import com.example.mushroomsdetect.utill.ImageConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -28,6 +23,8 @@ import java.util.List;
 public class UserController {
 
     final UserService userService;
+
+    final CustomUserDetailServiceImpl userDetailService;
 
     final PasswordEncoder passwordEncoder;
 
@@ -62,7 +59,7 @@ public class UserController {
         try {
             userService.updateUserDetails(principal.getName(), login, passwordEncoder.encode(password));
 
-            userService.reloadUserByUsername(login,principal);
+            userDetailService.reloadUserByUsername(login,principal);
 
             log.info("User data changed");
             return "redirect:/userProfile";

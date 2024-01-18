@@ -102,6 +102,33 @@
             <form th:action="@{'/admin/unbanUser/' + ${user.id}}" method="post">
                 <input type="submit" value="Разбанить"/>
             </form>
+            <form th:action="@{'/admin/deleteUser/' + ${user.id}}" method="post">
+                <input type="submit" value="Удалить"/>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Кэшированные пользователи</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Имя пользователя</th>
+        <th>Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${cachedUsers}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.login}"></td>
+        <td th:text="${user.isActive} ? 'Активен' : 'Неактивен'"></td>
+        <td>
+            <form th:action="@{'/admin/restoreUser/' + ${user.id}}" method="post">
+                <input type="submit" value="Востановить"/>
+            </form>
         </td>
     </tr>
     </tbody>

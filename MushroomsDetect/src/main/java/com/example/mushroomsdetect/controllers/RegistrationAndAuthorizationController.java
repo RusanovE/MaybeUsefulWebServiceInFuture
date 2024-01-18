@@ -1,6 +1,7 @@
 package com.example.mushroomsdetect.controllers;
 
 import com.example.mushroomsdetect.entitys.Role;
+import com.example.mushroomsdetect.entitys.UserOfApp;
 import com.example.mushroomsdetect.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,22 +33,27 @@ public class RegistrationAndAuthorizationController {
                                   @RequestParam Role role,
                                   @RequestParam MultipartFile photo){
 
-        if (userService.registerNewUser(login,passwordEncoder.encode(password),role,photo)){
-            log.info("New user registered successfully");
-            return "redirect:/welcome";
+        try {
+            UserOfApp user = new UserOfApp(login,passwordEncoder.encode(password),role,true);
+            if (userService.registerNewUser(user,photo)){
+                log.info("New user registered successfully");
+                return "redirect:/welcome";
+            }  else return "redirect:/registration";
+        } catch (Exception e) {
+            log.error("Error with operation: \"Register user\"  - " + e.getMessage());
+            return "redirect:/error/404";
         }
-        else return "redirect:/registration";
     }
 
-/*    @GetMapping("/login")
-    public String loginForm(){
-        return "login";
-    }
-
-    @GetMapping("/logout")
-    public String logoutForm(){
-        return "logout";
-    }*/
+//    @GetMapping("/login")
+//    public String loginForm(){
+//        return "login";
+//    }
+//
+//    @GetMapping("/logout")
+//    public String logoutForm(){
+//        return "logout";
+//    }
 
 
 }

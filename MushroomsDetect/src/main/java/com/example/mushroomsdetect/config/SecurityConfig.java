@@ -1,6 +1,6 @@
 package com.example.mushroomsdetect.config;
 
-import com.example.mushroomsdetect.services.UserService;
+import com.example.mushroomsdetect.services.impl.CustomUserDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,34 +14,43 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig  {
 
-    private final UserService userService;
+    private final CustomUserDetailServiceImpl userDetailService;
 
     @Bean
     DaoAuthenticationProvider daoAuthenticationProvider(){
        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
        provider.setPasswordEncoder(passwordEncoder());
-       provider.setUserDetailsService(userService);
+       provider.setUserDetailsService(userDetailService);
 
        return provider;
     }
 
-    @Bean
+
+    @Bean  //TODO Сделать перевод на собственную обработку входа выхода
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
-                .httpBasic(Customizer.withDefaults())
+                 .httpBasic(Customizer.withDefaults())
+
                  .formLogin(Customizer.withDefaults())
                  .logout(Customizer.withDefaults())
+//                 .formLogin((login) ->{
+//                     login.loginPage("/login");
+//                     login.permitAll();
+//                 })
+//                 .logout((logout) ->{
+//                     logout.logoutUrl("/logout");
+//                     logout.permitAll();
+//                 })
                 .authorizeHttpRequests((auth) -> {
                     auth.requestMatchers("/welcome").permitAll();
                     auth.requestMatchers("/registration", "/processRegistration").authenticated();
-                    auth.requestMatchers("/admin", "/admin/banUser/{userId}", "/admin/unbanUser/{userId}").hasRole("ADMIN");
+                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();
                 });
         return http.build();
@@ -49,6 +58,7 @@ public class SecurityConfig  {
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
         return configuration.getAuthenticationManager();
     }
 
@@ -58,3 +68,4 @@ public class SecurityConfig  {
     }
 
 }
+
