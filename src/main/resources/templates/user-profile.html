@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        h2, h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #userFormContainer {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .closeButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 22px;
+            color: #333;
+            background: none;
+            border: none;
+            width: auto;
+            height: auto;
+            padding: 0;
+        }
+
+        .info-wrapper {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 400px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div id="overlay"></div>
+
+<div id="userFormContainer">
+    <h2>Изминение данных</h2>
+    <button id="closeButton" class="closeButton">X</button>
+
+    <!-- Форма ввода данных пользователя -->
+    <form id="userForm" th:action="@{/userProfile/changeUserDetails}" method="post" enctype="multipart/form-data">
+        <label for="login">Логин:</label>
+        <input type="text" id="login" name="login" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button id="changeData" type="submit">Изменить</button>
+    </form>
+</div>
+
+<div class="info-wrapper">
+    <h2>Личный кабинет</h2>
+
+    <img th:if="${user.userPhoto != null}" th:src="'data:image/png;base64,' + ${userPhotoBase64}" alt="User Photo"/>
+    <img th:if="${userPhotoBase64 == null}" th:src="@{/img/default-photo.png}" alt="Default User Photo"/>
+
+    <label for="userLogin">Логин:</label>
+    <input type="text" id="userLogin" name="current login" th:value="${user.login}" readonly>
+
+    <h3>Меню:</h3>
+    <button type="button" id="openFormButton">Сменить данные</button>
+    <button type="button" onclick="window.location.href = '/welcome'">На главную</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('openFormButton').addEventListener('click', function () {
+            document.getElementById('userFormContainer').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        document.getElementById('closeButton').addEventListener('click', function () {
+            document.getElementById('userFormContainer').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+    });
+</script>
+
+</body>
+</html>
