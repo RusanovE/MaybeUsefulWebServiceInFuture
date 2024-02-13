@@ -2,7 +2,9 @@ package com.example.mushroomsdetect.controllers;
 
 import com.example.mushroomsdetect.DTO.UserDTO;
 import com.example.mushroomsdetect.entitys.UserOfApp;
+import com.example.mushroomsdetect.services.ArticleScrapingService;
 import com.example.mushroomsdetect.services.UserService;
+import com.example.mushroomsdetect.services.impl.ArticleScrapingServiceImpl;
 import com.example.mushroomsdetect.services.impl.CustomUserDetailServiceImpl;
 import com.example.mushroomsdetect.utill.ImageConverter;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +30,15 @@ public class UserController {
 
     final PasswordEncoder passwordEncoder;
 
+    final ArticleScrapingService articleScrapingService;
+
     @RequestMapping({"/","/welcome"})
     public String welcome(Model model) {
 
         List<UserOfApp> userList = userService.getActiveUserList();
+        List<ArticleScrapingServiceImpl.Article> articleList = articleScrapingService.scrapeArticleTitles();
 
-        // Передаем список в модель
+        model.addAttribute("articleList", articleList);
         model.addAttribute("userList", userList);
 
         // Возвращаем имя представления (HTML-шаблона)

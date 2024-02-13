@@ -53,10 +53,10 @@
     </style>
 </head>
 <body>
-<form >
+<form th:action ="@{/logout}" method="post">
     <h2>Logout</h2>
     <label for="confirmation">Are you sure you want to logout?</label>
-    <button th:onclick ="@{/logout}" id="confirmation" type="submit">Logout</button>
+    <button  id="confirmation" name="logout" type="submit">Logout</button>
 </form>
 </body>
 </html>

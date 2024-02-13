@@ -93,6 +93,20 @@
 </ul>
 <p th:if="${#lists.isEmpty(userList)}">Список пользователей пуст</p>
 
+<div class="articles">
+    <h2>Список статей:</h2>
+    <ul th:if="${not #lists.isEmpty(articleList)}">
+        <!-- Используем th:each для отображения каждой статьи из articleList -->
+        <li th:each="article : ${articleList}">
+            <div class="article">
+                <img th:src="${article.imageUrl}" alt="Article Image">
+                <a th:href="${article.url}"><h3 th:text="${article.title}"></h3></a>
+                <p th:text="${article.time}"></p>
+            </div>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(articleList)}">Список статей пуст</p>
+</div>
 
 </body>
 <script th:inline="javascript">
@@ -121,7 +135,7 @@
     setInterval(function() {
         // Перезагрузка страницы
         location.reload();
-    }, 6002); // Обновление каждые 6 секунд (ваш интервал)
+    }, 60002); // Обновление
 </script>
 
 </html>
