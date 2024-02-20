@@ -31,7 +31,6 @@ public class SecurityConfig   {
        return provider;
     }
 
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
@@ -50,7 +49,7 @@ public class SecurityConfig   {
                      logout.permitAll();
                  })
                 .authorizeHttpRequests((auth) -> {
-                    auth.requestMatchers("/welcome", "loginP", "logoutP").permitAll();
+                    auth.requestMatchers("/welcome/**", "/").permitAll();
                     auth.requestMatchers("/registration", "/processRegistration").hasAnyRole("USER", "ADMIN");
                     auth.requestMatchers("/admin/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();

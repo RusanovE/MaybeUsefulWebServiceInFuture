@@ -50,7 +50,7 @@ class UserControllerTest {
         Mockito.when(userService.getActiveUserList()).thenReturn(userList);
 
         // Act
-        String result = userController.welcome(model);
+        String result = userController.welcome(model, 0, 5, "title", "asc");
 
         // Assert
         assertEquals("welcome", result);

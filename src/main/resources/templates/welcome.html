@@ -42,6 +42,10 @@
             background-color: #45a049;
         }
 
+        .button:active {
+            background-color: blueviolet;
+        }
+        
         p {
             margin: 20px 0;
             font-size: 18px;
@@ -64,6 +68,13 @@
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .activePage {
+            pointer-events: none; /* Отключает взаимодействие с элементом */
+            background-color: #ccc; /* Цвет фона для неактивной ссылки */
+            color: #45a049; /* Цвет текста для неактивной ссылки */
+            padding: 8px 16px;
         }
     </style>
 </head>
@@ -91,21 +102,55 @@
         <p th:text="${user}"></p>
     </li>
 </ul>
+
 <p th:if="${#lists.isEmpty(userList)}">Список пользователей пуст</p>
 
-<div class="articles">
-    <h2>Список статей:</h2>
-    <ul th:if="${not #lists.isEmpty(articleList)}">
-        <!-- Используем th:each для отображения каждой статьи из articleList -->
-        <li th:each="article : ${articleList}">
-            <div class="article">
-                <img th:src="${article.imageUrl}" alt="Article Image">
-                <a th:href="${article.url}"><h3 th:text="${article.title}"></h3></a>
-                <p th:text="${article.time}"></p>
+<!-- СОРТИРОВКА -->
+<div id="sortingBlock">
+    <label for="sortBy">Сортировать по:</label>
+    <select id="sortBy" name="sortBy">
+        <option value="title">Название</option>
+        <option value="place">Местоположение</option>
+        <!-- Добавьте другие поля, которые могут быть использованы для сортировки -->
+    </select>
+
+    <label for="sortDir">Направление сортировки:</label>
+    <select id="sortDir" name="sortDir">
+        <option value="asc">По возрастанию</option>
+        <option value="desc">По убыванию</option>
+    </select>
+
+    <!-- Кнопка для применения сортировки -->
+    <button class="button" onclick="applySorting()">Применить сортировку</button>
+</div>
+
+
+<div class="universities">
+    <h2>Список ВУЗов Украины:</h2>
+    <ul th:if="${not #lists.isEmpty(universityPage.content)}">
+        <!-- Используем th:each для отображения каждой статьи из universityPage.content -->
+        <li th:each="university : ${universityPage.content}">
+            <div class="university">
+                <img th:src="${university.imageUrl}" alt="University Image">
+                <a th:href="${university.url}"><h3 th:text="${university.title}"></h3></a>
+                <p th:text="${university.place}"></p>
             </div>
         </li>
     </ul>
-    <p th:if="${#lists.isEmpty(articleList)}">Список статей пуст</p>
+    <p th:if="${universityPage.isEmpty()}">Список ВУЗов пуст</p>
+</div>
+
+<div class="pagination" th:if="${universityPage.totalPages > 1}">
+    <span th:if="${universityPage.hasPrevious()}">
+        <a class="button" th:href="@{/welcome/(page=${universityPage.number - 1}, size=${universityPage.size}, sortBy=${sortBy}, sortDir=${sortDir})}">&laquo; Назад</a>
+    </span>
+    <span th:each="i : ${#numbers.sequence(0, universityPage.totalPages - 1)}">
+        <a  id="page" class="button activePage" th:if="${universityPage.number == i}" th:text="${i + 1}"></a>
+        <a class="button" th:if="${universityPage.number != i}" th:href="@{/welcome/(page=${i}, size=${universityPage.size}, sortBy=${sortBy}, sortDir=${sortDir})}" th:text="${i + 1}"></a>
+    </span>
+    <span th:if="${universityPage.hasNext()}">
+        <a class="button" th:href="@{/welcome/(page=${universityPage.number + 1}, size=${universityPage.size}, sortBy=${sortBy}, sortDir=${sortDir})}">Вперед &raquo;</a>
+    </span>
 </div>
 
 </body>
@@ -136,6 +181,16 @@
         // Перезагрузка страницы
         location.reload();
     }, 60002); // Обновление
+</script>
+
+<script>
+    function applySorting() {
+        var sortBy = document.getElementById("sortBy").value;
+        var sortDir = document.getElementById("sortDir").value;
+
+        // Отправьте запрос на сервер с новыми параметрами сортировки
+        window.location.href = "/welcome?page=0&size=5&sortBy=" + sortBy + "&sortDir=" + sortDir;
+    }
 </script>
 
 </html>
