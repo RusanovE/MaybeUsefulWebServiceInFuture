@@ -8,8 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @Data
 public class UserDTO {
+    Long id;
     String login;
     String password;
     Role role;
     MultipartFile photo;
+
 }
